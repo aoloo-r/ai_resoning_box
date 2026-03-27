@@ -49,6 +49,13 @@ providers:
         name: "Qwen 2.5 32B"
         role: reasoning
 
+  reasoning_box:
+    enabled: false
+    models:
+      - id: reasoning-box
+        name: "ReasoningBox"
+        role: reasoning
+
 # Synthesis configuration
 synthesis:
   # Which provider/model acts as the final judge

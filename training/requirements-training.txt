@@ -1,0 +1,11 @@
+# Training dependencies (install separately — not needed for the web server)
+# pip install -r training/requirements-training.txt
+
+torch>=2.2.0
+transformers>=4.40.0
+datasets>=2.18.0
+peft>=0.10.0
+accelerate>=0.28.0
+bitsandbytes>=0.43.0
+wandb>=0.16.0
+trl>=0.8.0

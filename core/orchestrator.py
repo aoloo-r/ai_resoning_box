@@ -84,6 +84,9 @@ class Orchestrator:
             elif name == "ollama":
                 from core.providers.ollama_provider import OllamaProvider
                 return OllamaProvider()
+            elif name == "reasoning_box":
+                from core.providers.reasoning_box_provider import ReasoningBoxProvider
+                return ReasoningBoxProvider()
         except Exception as e:
             print(f"[WARN] Could not init provider {name}: {e}")
             return None

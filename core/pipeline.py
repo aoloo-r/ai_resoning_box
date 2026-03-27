@@ -1,10 +1,11 @@
-"""Main pipeline: ties orchestrator + synthesizer together."""
+"""Main pipeline: ties orchestrator + synthesizer + data collector together."""
 
 from __future__ import annotations
 import time
 from core.models import ModelRole, SynthesisResult, SynthesisStrategy
 from core.orchestrator import Orchestrator
 from core.synthesizer import Synthesizer
+from core.collector import DataCollector
 
 
 class EnsemblePipeline:
@@ -12,6 +13,7 @@ class EnsemblePipeline:
 
     def __init__(self, config_path: str | None = None, api_keys: dict[str, str] | None = None):
         self.orchestrator = Orchestrator(config_path, api_keys=api_keys)
+        self.collector = DataCollector()
         self._init_synthesizer()
 
     def _init_synthesizer(self):
@@ -98,5 +100,11 @@ class EnsemblePipeline:
             orchestrator=self.orchestrator,
             debate_rounds=debate_rounds,
         )
+
+        # Collect training data
+        try:
+            self.collector.collect(result)
+        except Exception:
+            pass  # Don't fail queries if collection errors
 
         return result

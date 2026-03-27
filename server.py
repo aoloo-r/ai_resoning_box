@@ -21,6 +21,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from core.models import SynthesisStrategy, ModelRole
 from core.pipeline import EnsemblePipeline
+from core.collector import DataCollector
 
 app = FastAPI(
     title="AI Ensemble Reasoning Platform",
@@ -171,6 +172,49 @@ async def query(req: QueryRequest):
 @app.get("/api/strategies")
 async def get_strategies():
     return [{"id": s.value, "name": s.value.replace("_", " ").title()} for s in SynthesisStrategy]
+
+
+@app.get("/api/training/stats")
+async def get_training_stats():
+    """Get training data collection statistics."""
+    collector = DataCollector()
+    stats = collector.get_stats()
+    if not stats:
+        return {
+            "total_queries": 0,
+            "total_responses": 0,
+            "training_pairs": 0,
+            "avg_confidence": 0,
+            "training_readiness": "early",
+            "training_readiness_pct": 0,
+            "model_counts": {},
+            "model_wins": {},
+            "strategy_counts": {},
+            "raw_file_mb": 0,
+            "training_file_mb": 0,
+        }
+    # Remove internal fields
+    stats.pop("_total_confidence", None)
+    return stats
+
+
+@app.get("/api/training/recent")
+async def get_recent_training():
+    """Get recent training data entries."""
+    collector = DataCollector()
+    entries = collector.get_recent_entries(20)
+    # Return summaries, not full content
+    return [
+        {
+            "id": e.get("id"),
+            "timestamp": e.get("timestamp"),
+            "query": e.get("query", "")[:120],
+            "confidence": e.get("confidence", 0),
+            "strategy": e.get("strategy"),
+            "num_models": len(e.get("responses", [])),
+        }
+        for e in entries
+    ]
 
 
 # Serve static UI files

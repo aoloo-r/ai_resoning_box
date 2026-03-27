@@ -225,6 +225,63 @@
         .error-banner.visible { display: flex; align-items: center; gap: 8px; }
 
         /* Footer */
+        /* Training Dashboard */
+        .training-section { margin-top: 40px; }
+        .training-toggle-bar {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 14px 20px; background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); cursor: pointer; transition: all 0.2s; margin-bottom: 16px;
+        }
+        .training-toggle-bar:hover { border-color: var(--border-hover); }
+        .training-toggle-bar h3 { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+        .training-toggle-bar .badge {
+            font-size: 11px; padding: 2px 10px; border-radius: 12px; font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .badge-early { background: var(--danger-dim); color: var(--danger); }
+        .badge-collecting { background: var(--warning-dim); color: var(--warning); }
+        .badge-almost { background: var(--accent-dim); color: var(--accent); }
+        .badge-ready { background: var(--success-dim); color: var(--success); }
+        .training-content { display: none; animation: fadeIn 0.3s ease; }
+        .training-content.open { display: block; }
+
+        .training-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 20px; }
+        .stat-card {
+            background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+            padding: 16px; text-align: center;
+        }
+        .stat-card .stat-value {
+            font-size: 28px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+            background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .stat-card .stat-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+
+        .progress-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; }
+        .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .progress-header h4 { font-size: 13px; font-weight: 600; }
+        .progress-header span { font-size: 12px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; }
+        .progress-bar-outer { width: 100%; height: 12px; background: var(--surface3); border-radius: 6px; overflow: hidden; }
+        .progress-bar-inner { height: 100%; border-radius: 6px; background: var(--gradient); transition: width 0.8s ease; }
+        .progress-milestones { display: flex; justify-content: space-between; margin-top: 8px; font-size: 11px; color: var(--text-dim); }
+
+        .model-leaderboard { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 16px; }
+        .leaderboard-header { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 600; background: var(--surface2); }
+        .leaderboard-row { display: flex; align-items: center; padding: 10px 16px; border-bottom: 1px solid var(--border); font-size: 13px; }
+        .leaderboard-row:last-child { border-bottom: none; }
+        .leaderboard-row .rank { width: 30px; font-weight: 700; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; }
+        .leaderboard-row .name { flex: 1; }
+        .leaderboard-row .wins { font-family: 'JetBrains Mono', monospace; color: var(--success); font-weight: 600; }
+        .leaderboard-row .bar-wrap { width: 100px; height: 4px; background: var(--surface3); border-radius: 2px; margin-left: 12px; }
+        .leaderboard-row .bar-fill { height: 100%; border-radius: 2px; background: var(--gradient); }
+
+        .recent-queries { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+        .recent-header { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 600; background: var(--surface2); }
+        .recent-row { display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-bottom: 1px solid var(--border); font-size: 12px; }
+        .recent-row:last-child { border-bottom: none; }
+        .recent-row .query-text { flex: 1; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .recent-row .conf { font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+        .recent-row .time { color: var(--text-dim); font-size: 11px; white-space: nowrap; }
+
         .footer { text-align: center; padding: 24px; font-size: 12px; color: var(--text-dim); border-top: 1px solid var(--border); margin-top: 40px; }
         .footer a { color: var(--accent); text-decoration: none; }
         .footer a:hover { text-decoration: underline; }
@@ -364,6 +421,55 @@
             </div>
             <div class="section-header"><h3>Synthesized Answer</h3><div class="line"></div></div>
             <div class="final-answer" id="finalAnswer"></div>
+        </div>
+    </div>
+
+        <!-- Training Dashboard -->
+        <div class="training-section">
+            <div class="training-toggle-bar" onclick="toggleTraining()">
+                <h3>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10m6 10V4M6 20v-4"/></svg>
+                    ReasoningBox Training Data
+                    <span class="badge" id="readinessBadge">--</span>
+                </h3>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-dim)" stroke-width="2" id="trainingChevron" style="transition:transform 0.2s"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+
+            <div class="training-content" id="trainingContent">
+                <div class="training-grid" id="trainingStats">
+                    <div class="stat-card"><div class="stat-value" id="statQueries">0</div><div class="stat-label">Total Queries</div></div>
+                    <div class="stat-card"><div class="stat-value" id="statPairs">0</div><div class="stat-label">Training Pairs</div></div>
+                    <div class="stat-card"><div class="stat-value" id="statResponses">0</div><div class="stat-label">Model Responses</div></div>
+                    <div class="stat-card"><div class="stat-value" id="statConfidence">0%</div><div class="stat-label">Avg Confidence</div></div>
+                </div>
+
+                <div class="progress-section">
+                    <div class="progress-header">
+                        <h4>Training Readiness</h4>
+                        <span id="progressLabel">0 / 1,000 pairs</span>
+                    </div>
+                    <div class="progress-bar-outer">
+                        <div class="progress-bar-inner" id="progressBar" style="width:0%"></div>
+                    </div>
+                    <div class="progress-milestones">
+                        <span>0</span>
+                        <span>100 (min)</span>
+                        <span>500</span>
+                        <span>1,000 (ready)</span>
+                    </div>
+                </div>
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="model-leaderboard">
+                        <div class="leaderboard-header">Model Leaderboard (Wins)</div>
+                        <div id="leaderboardBody"><div class="leaderboard-row"><span class="name" style="color:var(--text-dim)">No data yet</span></div></div>
+                    </div>
+                    <div class="recent-queries">
+                        <div class="recent-header">Recent Queries</div>
+                        <div id="recentBody"><div class="recent-row"><span class="query-text" style="color:var(--text-dim)">No queries yet</span></div></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -630,6 +736,89 @@
         });
 
         // Auto-open keys panel on first visit if no keys
+        // --- Training Dashboard ---
+        let trainingOpen = false;
+        function toggleTraining() {
+            trainingOpen = !trainingOpen;
+            document.getElementById('trainingContent').classList.toggle('open', trainingOpen);
+            document.getElementById('trainingChevron').style.transform = trainingOpen ? 'rotate(180deg)' : '';
+            if (trainingOpen) loadTrainingStats();
+        }
+
+        async function loadTrainingStats() {
+            try {
+                const [statsResp, recentResp] = await Promise.all([
+                    fetch(`${API}/training/stats`),
+                    fetch(`${API}/training/recent`),
+                ]);
+                const stats = await statsResp.json();
+                const recent = await recentResp.json();
+                renderTrainingStats(stats);
+                renderRecentQueries(recent);
+            } catch (e) {
+                console.error('Failed to load training stats:', e);
+            }
+        }
+
+        function renderTrainingStats(s) {
+            document.getElementById('statQueries').textContent = s.total_queries || 0;
+            document.getElementById('statPairs').textContent = s.training_pairs || 0;
+            document.getElementById('statResponses').textContent = s.total_responses || 0;
+            document.getElementById('statConfidence').textContent = ((s.avg_confidence || 0) * 100).toFixed(0) + '%';
+
+            // Progress bar
+            const pct = s.training_readiness_pct || 0;
+            document.getElementById('progressBar').style.width = pct + '%';
+            document.getElementById('progressLabel').textContent = `${s.training_pairs || 0} / 1,000 pairs`;
+
+            // Readiness badge
+            const badge = document.getElementById('readinessBadge');
+            const readiness = s.training_readiness || 'early';
+            const badgeMap = {
+                early: ['Early', 'badge-early'],
+                collecting: ['Collecting', 'badge-collecting'],
+                almost_ready: ['Almost Ready', 'badge-almost'],
+                ready: ['Ready to Train', 'badge-ready'],
+            };
+            const [text, cls] = badgeMap[readiness] || badgeMap.early;
+            badge.textContent = text;
+            badge.className = 'badge ' + cls;
+
+            // Leaderboard
+            const wins = s.model_wins || {};
+            const counts = s.model_counts || {};
+            const models = Object.keys(wins).sort((a, b) => wins[b] - wins[a]);
+            const maxWins = models.length ? wins[models[0]] : 1;
+
+            if (models.length) {
+                document.getElementById('leaderboardBody').innerHTML = models.map((m, i) =>
+                    `<div class="leaderboard-row">
+                        <span class="rank">#${i + 1}</span>
+                        <span class="name">${escapeHtml(m)}</span>
+                        <span class="wins">${wins[m]} wins</span>
+                        <div class="bar-wrap"><div class="bar-fill" style="width:${(wins[m]/maxWins)*100}%"></div></div>
+                    </div>`
+                ).join('');
+            }
+        }
+
+        function renderRecentQueries(entries) {
+            if (!entries.length) return;
+            document.getElementById('recentBody').innerHTML = entries.reverse().map(e => {
+                const conf = ((e.confidence || 0) * 100).toFixed(0);
+                const confClass = e.confidence >= 0.7 ? 'score-high' : e.confidence >= 0.4 ? 'score-mid' : 'score-low';
+                const time = e.timestamp ? new Date(e.timestamp).toLocaleString() : '';
+                return `<div class="recent-row">
+                    <span class="query-text">${escapeHtml(e.query)}</span>
+                    <span class="conf ${confClass}">${conf}%</span>
+                    <span class="time">${time}</span>
+                </div>`;
+            }).join('');
+        }
+
+        // Load training stats on page load (non-blocking)
+        loadTrainingStats();
+
         updateKeysUI();
         refreshStatus();
         if (!hasAnyKey()) setTimeout(openKeys, 500);
