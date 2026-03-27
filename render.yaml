@@ -1,0 +1,19 @@
+# Render.com deployment configuration
+# One-click deploy: https://render.com/deploy
+services:
+  - type: web
+    name: ai-reasoning-box
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn server:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: GOOGLE_API_KEY
+        sync: false
+      - key: DEEPSEEK_API_KEY
+        sync: false
+      - key: PYTHON_VERSION
+        value: "3.12.0"

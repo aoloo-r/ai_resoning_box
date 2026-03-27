@@ -6,6 +6,7 @@ Run:
 """
 
 from __future__ import annotations
+import os
 import sys
 from pathlib import Path
 
@@ -17,6 +18,7 @@ load_dotenv(Path(__file__).parent / ".env")
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from core.models import SynthesisStrategy, ModelRole
 from core.pipeline import EnsemblePipeline
