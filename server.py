@@ -18,7 +18,6 @@ load_dotenv(Path(__file__).parent / ".env")
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from core.models import SynthesisStrategy, ModelRole
 from core.pipeline import EnsemblePipeline
@@ -36,13 +35,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-pipeline: EnsemblePipeline | None = None
 
-
-@app.on_event("startup")
-async def startup():
-    global pipeline
-    pipeline = EnsemblePipeline()
+class ApiKeys(BaseModel):
+    ANTHROPIC_API_KEY: str | None = None
+    OPENAI_API_KEY: str | None = None
+    GOOGLE_API_KEY: str | None = None
+    DEEPSEEK_API_KEY: str | None = None
 
 
 class QueryRequest(BaseModel):
@@ -52,6 +50,11 @@ class QueryRequest(BaseModel):
     roles: list[str] | None = None
     temperature: float = 0.7
     max_tokens: int = 4096
+    api_keys: ApiKeys | None = None
+
+
+class StatusRequest(BaseModel):
+    api_keys: ApiKeys | None = None
 
 
 class ModelResponseOut(BaseModel):
@@ -80,13 +83,42 @@ class SynthesisResultOut(BaseModel):
     individual_responses: list[ModelResponseOut]
 
 
+def _build_keys_dict(api_keys: ApiKeys | None) -> dict[str, str]:
+    """Convert ApiKeys model to a plain dict, filtering out empty values."""
+    if not api_keys:
+        return {}
+    keys = {}
+    for field in ["ANTHROPIC_API_KEY", "OPENAI_API_KEY", "GOOGLE_API_KEY", "DEEPSEEK_API_KEY"]:
+        val = getattr(api_keys, field, None)
+        if val and val.strip():
+            keys[field] = val.strip()
+    return keys
+
+
+def _make_pipeline(api_keys: ApiKeys | None = None) -> EnsemblePipeline:
+    """Create a pipeline instance with user-provided API keys."""
+    keys = _build_keys_dict(api_keys)
+    return EnsemblePipeline(api_keys=keys)
+
+
+@app.post("/api/status")
+async def get_status_post(req: StatusRequest):
+    """Get status using user-provided API keys."""
+    pipeline = _make_pipeline(req.api_keys)
+    return pipeline.get_status()
+
+
 @app.get("/api/status")
 async def get_status():
+    """Get status using env-based API keys (fallback)."""
+    pipeline = _make_pipeline()
     return pipeline.get_status()
 
 
 @app.post("/api/query", response_model=SynthesisResultOut)
 async def query(req: QueryRequest):
+    pipeline = _make_pipeline(req.api_keys)
+
     try:
         strategy = SynthesisStrategy(req.strategy)
     except ValueError:

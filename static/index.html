@@ -12,731 +12,275 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.0/marked.min.js"></script>
     <style>
         :root {
-            --bg: #09090b;
-            --surface: #111114;
-            --surface2: #18181b;
-            --surface3: #1f1f23;
-            --border: #27272a;
-            --border-hover: #3f3f46;
-            --text: #fafafa;
-            --text-secondary: #a1a1aa;
-            --text-dim: #71717a;
-            --accent: #8b5cf6;
-            --accent-dim: rgba(139, 92, 246, 0.15);
-            --accent2: #06b6d4;
-            --accent2-dim: rgba(6, 182, 212, 0.15);
-            --success: #22c55e;
-            --success-dim: rgba(34, 197, 94, 0.12);
-            --warning: #eab308;
-            --warning-dim: rgba(234, 179, 8, 0.12);
-            --danger: #ef4444;
-            --danger-dim: rgba(239, 68, 68, 0.12);
+            --bg: #09090b; --surface: #111114; --surface2: #18181b; --surface3: #1f1f23;
+            --border: #27272a; --border-hover: #3f3f46;
+            --text: #fafafa; --text-secondary: #a1a1aa; --text-dim: #71717a;
+            --accent: #8b5cf6; --accent-dim: rgba(139,92,246,0.15);
+            --accent2: #06b6d4; --accent2-dim: rgba(6,182,212,0.15);
+            --success: #22c55e; --success-dim: rgba(34,197,94,0.12);
+            --warning: #eab308; --warning-dim: rgba(234,179,8,0.12);
+            --danger: #ef4444; --danger-dim: rgba(239,68,68,0.12);
             --gradient: linear-gradient(135deg, #8b5cf6, #06b6d4);
-            --gradient-warm: linear-gradient(135deg, #8b5cf6, #ec4899);
-            --radius: 12px;
-            --radius-sm: 8px;
-            --radius-xs: 6px;
+            --radius: 12px; --radius-sm: 8px; --radius-xs: 6px;
             --shadow: 0 4px 6px -1px rgba(0,0,0,0.3), 0 2px 4px -2px rgba(0,0,0,0.2);
             --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.4), 0 4px 6px -4px rgba(0,0,0,0.3);
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+        body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
         /* Header */
         .header {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: rgba(9, 9, 11, 0.8);
-            backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--border);
-            padding: 0 24px;
-            height: 56px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(9,9,11,0.8); backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border); padding: 0 24px; height: 56px;
+            display: flex; align-items: center; justify-content: space-between;
         }
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+        .header-left { display: flex; align-items: center; gap: 12px; }
         .logo {
-            width: 32px;
-            height: 32px;
-            background: var(--gradient);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            font-weight: 700;
-            color: white;
-            box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+            width: 32px; height: 32px; background: var(--gradient); border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; font-weight: 700; color: white; box-shadow: 0 0 20px rgba(139,92,246,0.3);
         }
-        .header h1 {
-            font-size: 16px;
-            font-weight: 600;
-            letter-spacing: -0.3px;
-        }
-        .header h1 span {
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-        .status-badge {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 12px;
-            color: var(--text-dim);
-            padding: 4px 10px;
-            border-radius: 20px;
-            border: 1px solid var(--border);
-            background: var(--surface);
-        }
-        .status-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--success);
-            box-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
-        }
-        .status-dot.offline { background: var(--danger); box-shadow: 0 0 8px rgba(239, 68, 68, 0.5); }
-        .github-link {
-            color: var(--text-dim);
-            text-decoration: none;
-            font-size: 12px;
-            padding: 4px 10px;
-            border-radius: 20px;
-            border: 1px solid var(--border);
-            transition: all 0.2s;
-        }
-        .github-link:hover { color: var(--text); border-color: var(--border-hover); }
+        .header h1 { font-size: 16px; font-weight: 600; }
+        .header h1 span { background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .header-right { display: flex; align-items: center; gap: 10px; }
+        .status-badge { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-dim); padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface); }
+        .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); box-shadow: 0 0 8px rgba(34,197,94,0.5); }
+        .status-dot.offline { background: var(--danger); box-shadow: 0 0 8px rgba(239,68,68,0.5); }
+        .header-btn { color: var(--text-dim); text-decoration: none; font-size: 12px; padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; transition: all 0.2s; font-family: inherit; }
+        .header-btn:hover { color: var(--text); border-color: var(--border-hover); }
+        .header-btn.keys-set { border-color: var(--success); color: var(--success); }
 
-        /* Layout */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 24px;
+        /* Container */
+        .container { max-width: 1400px; margin: 0 auto; padding: 24px; }
+
+        /* API Keys Panel */
+        .keys-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200; backdrop-filter: blur(4px); }
+        .keys-overlay.open { display: flex; align-items: center; justify-content: center; }
+        .keys-panel {
+            background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+            padding: 28px; width: 520px; max-width: 95vw; box-shadow: var(--shadow-lg);
+        }
+        .keys-panel h2 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+        .keys-panel .subtitle { font-size: 13px; color: var(--text-dim); margin-bottom: 20px; }
+        .key-field { margin-bottom: 14px; }
+        .key-field label { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+        .key-field label .provider-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .key-field label .optional { font-weight: 400; color: var(--text-dim); font-size: 11px; }
+        .key-field input {
+            width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-xs);
+            padding: 10px 14px; color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 12px; outline: none; transition: border-color 0.2s;
+        }
+        .key-field input:focus { border-color: var(--accent); }
+        .key-field input::placeholder { color: var(--text-dim); }
+        .key-field .hint { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
+        .keys-actions { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
+        .keys-notice {
+            background: var(--accent-dim); border: 1px solid rgba(139,92,246,0.2); border-radius: var(--radius-xs);
+            padding: 10px 14px; font-size: 12px; color: var(--text-secondary); margin-bottom: 18px; line-height: 1.5;
         }
 
-        /* Hero section */
-        .hero {
-            text-align: center;
-            padding: 32px 0 24px;
+        /* Hero */
+        .hero { text-align: center; padding: 32px 0 24px; }
+        .hero h2 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 8px; }
+        .hero p { color: var(--text-secondary); font-size: 14px; max-width: 500px; margin: 0 auto; }
+
+        /* No keys warning */
+        .no-keys-banner {
+            background: var(--warning-dim); border: 1px solid rgba(234,179,8,0.3); border-radius: var(--radius-sm);
+            padding: 14px 18px; margin-bottom: 20px; font-size: 13px; color: var(--warning); display: flex; align-items: center; gap: 10px;
         }
-        .hero h2 {
-            font-size: 28px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            margin-bottom: 8px;
-        }
-        .hero p {
-            color: var(--text-secondary);
-            font-size: 14px;
-            max-width: 500px;
-            margin: 0 auto;
-        }
+        .no-keys-banner a { color: var(--warning); font-weight: 600; cursor: pointer; text-decoration: underline; }
 
         /* Models bar */
-        .models-bar {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-bottom: 24px;
-        }
-        .model-chip {
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 500;
-            border: 1px solid var(--border);
-            background: var(--surface);
-            color: var(--text-dim);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s;
-        }
-        .model-chip.active {
-            border-color: var(--accent);
-            color: var(--text);
-            background: var(--accent-dim);
-        }
-        .model-chip .dot {
-            width: 5px; height: 5px;
-            border-radius: 50%;
-        }
+        .models-bar { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 24px; }
+        .model-chip { padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 500; border: 1px solid var(--border); background: var(--surface); color: var(--text-dim); display: flex; align-items: center; gap: 6px; transition: all 0.2s; }
+        .model-chip.active { border-color: var(--accent); color: var(--text); background: var(--accent-dim); }
+        .model-chip .dot { width: 5px; height: 5px; border-radius: 50%; }
         .model-chip .dot.anthropic { background: #d97706; }
         .model-chip .dot.openai { background: #22c55e; }
         .model-chip .dot.google { background: #3b82f6; }
         .model-chip .dot.deepseek { background: #8b5cf6; }
-        .model-chip .dot.ollama { background: #f97316; }
 
-        /* Input area */
-        .input-area {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            overflow: hidden;
-            margin-bottom: 24px;
-            box-shadow: var(--shadow);
-            transition: border-color 0.2s;
-        }
-        .input-area:focus-within {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px var(--accent-dim);
-        }
-        .input-area textarea {
-            width: 100%;
-            background: transparent;
-            border: none;
-            padding: 20px;
-            color: var(--text);
-            font-family: 'Inter', sans-serif;
-            font-size: 15px;
-            resize: vertical;
-            min-height: 120px;
-            outline: none;
-            line-height: 1.6;
-        }
-        .input-area textarea::placeholder { color: var(--text-dim); }
-        .controls {
-            display: flex;
-            gap: 10px;
-            padding: 12px 20px;
-            border-top: 1px solid var(--border);
-            background: var(--surface2);
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        select {
-            font-family: 'Inter', sans-serif;
-            font-size: 13px;
-            background: var(--surface3);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-xs);
-            padding: 8px 12px;
-            color: var(--text);
-            outline: none;
-            cursor: pointer;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2371717a' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 8px center;
-            padding-right: 28px;
-        }
-        select:hover { border-color: var(--border-hover); }
-
-        .btn {
-            font-family: 'Inter', sans-serif;
-            font-size: 13px;
-            font-weight: 600;
-            border: none;
-            border-radius: var(--radius-xs);
-            padding: 9px 20px;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .btn-primary {
-            background: var(--gradient);
-            color: white;
-            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
-        }
-        .btn-primary:hover { opacity: 0.9; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4); }
-        .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
-        .btn-secondary {
-            background: var(--surface3);
-            color: var(--text-secondary);
-            border: 1px solid var(--border);
-        }
-        .btn-secondary:hover { border-color: var(--border-hover); color: var(--text); }
-
-        .timer {
-            font-size: 12px;
-            font-family: 'JetBrains Mono', monospace;
-            color: var(--text-dim);
-            margin-left: auto;
-        }
-
-        .controls-right {
-            margin-left: auto;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        /* Example queries */
-        .examples {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-bottom: 24px;
-            justify-content: center;
-        }
-        .example-chip {
-            font-size: 12px;
-            padding: 6px 14px;
-            border-radius: 20px;
-            border: 1px solid var(--border);
-            background: var(--surface);
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.2s;
-        }
+        /* Examples */
+        .examples { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; justify-content: center; }
+        .example-chip { font-size: 12px; padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface); color: var(--text-secondary); cursor: pointer; transition: all 0.2s; }
         .example-chip:hover { border-color: var(--accent); color: var(--text); background: var(--accent-dim); }
 
+        /* Input area */
+        .input-area { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 24px; box-shadow: var(--shadow); transition: border-color 0.2s; }
+        .input-area:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); }
+        .input-area textarea { width: 100%; background: transparent; border: none; padding: 20px; color: var(--text); font-family: 'Inter', sans-serif; font-size: 15px; resize: vertical; min-height: 120px; outline: none; line-height: 1.6; }
+        .input-area textarea::placeholder { color: var(--text-dim); }
+        .controls { display: flex; gap: 10px; padding: 12px 20px; border-top: 1px solid var(--border); background: var(--surface2); align-items: center; flex-wrap: wrap; }
+        select { font-family: 'Inter', sans-serif; font-size: 13px; background: var(--surface3); border: 1px solid var(--border); border-radius: var(--radius-xs); padding: 8px 12px; color: var(--text); outline: none; cursor: pointer; }
+        select:hover { border-color: var(--border-hover); }
+
+        .btn { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; border: none; border-radius: var(--radius-xs); padding: 9px 20px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px; }
+        .btn-primary { background: var(--gradient); color: white; box-shadow: 0 2px 8px rgba(139,92,246,0.3); }
+        .btn-primary:hover { opacity: 0.9; }
+        .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
+        .btn-secondary { background: var(--surface3); color: var(--text-secondary); border: 1px solid var(--border); }
+        .btn-secondary:hover { border-color: var(--border-hover); color: var(--text); }
+        .timer { font-size: 12px; font-family: 'JetBrains Mono', monospace; color: var(--text-dim); }
+        .controls-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+
         /* Loading */
-        .loading {
-            display: none;
-            padding: 60px 20px;
-            text-align: center;
-        }
+        .loading { display: none; padding: 60px 20px; text-align: center; }
         .loading.visible { display: block; }
-        .loading-grid {
-            display: flex;
-            gap: 4px;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-        .loading-bar {
-            width: 4px;
-            height: 30px;
-            background: var(--accent);
-            border-radius: 2px;
-            animation: loading-wave 1.2s ease-in-out infinite;
-        }
+        .loading-grid { display: flex; gap: 4px; justify-content: center; margin-bottom: 20px; }
+        .loading-bar { width: 4px; height: 30px; background: var(--accent); border-radius: 2px; animation: loading-wave 1.2s ease-in-out infinite; }
         .loading-bar:nth-child(2) { animation-delay: 0.1s; }
         .loading-bar:nth-child(3) { animation-delay: 0.2s; }
         .loading-bar:nth-child(4) { animation-delay: 0.3s; }
         .loading-bar:nth-child(5) { animation-delay: 0.4s; }
-        @keyframes loading-wave {
-            0%, 100% { transform: scaleY(0.4); opacity: 0.4; }
-            50% { transform: scaleY(1); opacity: 1; }
-        }
-        .loading-text {
-            font-size: 14px;
-            color: var(--text-secondary);
-            margin-bottom: 4px;
-        }
-        .loading-sub {
-            font-size: 12px;
-            color: var(--text-dim);
-        }
+        @keyframes loading-wave { 0%, 100% { transform: scaleY(0.4); opacity: 0.4; } 50% { transform: scaleY(1); opacity: 1; } }
+        .loading-text { font-size: 14px; color: var(--text-secondary); margin-bottom: 4px; }
+        .loading-sub { font-size: 12px; color: var(--text-dim); }
 
         /* Results */
         .results { display: none; animation: fadeIn 0.3s ease; }
         .results.visible { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .section-header { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+        .section-header h3 { font-size: 13px; font-weight: 600; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+        .section-header .line { flex: 1; height: 1px; background: var(--border); }
 
-        .section-header {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-        .section-header h3 {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .section-header .line {
-            flex: 1;
-            height: 1px;
-            background: var(--border);
-        }
-
-        /* Model response cards */
-        .model-responses {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-            gap: 12px;
-            margin-bottom: 28px;
-        }
-        .model-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            overflow: hidden;
-            transition: border-color 0.2s;
-        }
+        /* Model cards */
+        .model-responses { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 12px; margin-bottom: 28px; }
+        .model-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: border-color 0.2s; }
         .model-card:hover { border-color: var(--border-hover); }
-        .model-card-header {
-            padding: 12px 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border);
-        }
+        .model-card-header { padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
         .model-card-header .model-info { display: flex; align-items: center; gap: 8px; }
         .model-card-header .model-name { font-weight: 600; font-size: 13px; }
         .model-card-header .model-meta { font-size: 11px; color: var(--text-dim); }
-        .model-card-header .rank-badge {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .score-pill {
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
-            font-family: 'JetBrains Mono', monospace;
-        }
+        .rank-badge { display: flex; align-items: center; gap: 6px; }
+        .score-pill { padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
         .score-high { background: var(--success-dim); color: var(--success); }
         .score-mid { background: var(--warning-dim); color: var(--warning); }
         .score-low { background: var(--danger-dim); color: var(--danger); }
-        .rank-num {
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-dim);
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        /* Score breakdown bar */
-        .score-breakdown {
-            display: flex;
-            gap: 1px;
-            padding: 0 16px;
-            height: 3px;
-        }
-        .score-bar-segment {
-            height: 100%;
-            border-radius: 1px;
-            transition: flex 0.3s;
-        }
-
-        .model-card-body {
-            padding: 16px;
-            font-size: 13px;
-            line-height: 1.7;
-            max-height: 280px;
-            overflow-y: auto;
-            color: var(--text-secondary);
-        }
+        .rank-num { font-size: 11px; font-weight: 600; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; }
+        .score-breakdown { display: flex; gap: 1px; padding: 0 16px; height: 3px; }
+        .score-bar-segment { height: 100%; border-radius: 1px; }
+        .model-card-body { padding: 16px; font-size: 13px; line-height: 1.7; max-height: 280px; overflow-y: auto; color: var(--text-secondary); }
         .model-card-body::-webkit-scrollbar { width: 4px; }
         .model-card-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
         .model-card-body.error { color: var(--danger); }
-
-        .model-card-body .markdown-content h1,
-        .model-card-body .markdown-content h2,
-        .model-card-body .markdown-content h3 { font-size: 14px; color: var(--text); margin: 12px 0 6px; }
+        .model-card-body .markdown-content h1, .model-card-body .markdown-content h2, .model-card-body .markdown-content h3 { font-size: 14px; color: var(--text); margin: 12px 0 6px; }
         .model-card-body .markdown-content p { margin: 6px 0; }
-        .model-card-body .markdown-content code {
-            background: var(--surface3);
-            padding: 1px 5px;
-            border-radius: 3px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-        }
-        .model-card-body .markdown-content pre {
-            background: var(--surface3);
-            padding: 10px;
-            border-radius: var(--radius-xs);
-            overflow-x: auto;
-            margin: 8px 0;
-        }
+        .model-card-body .markdown-content code { background: var(--surface3); padding: 1px 5px; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+        .model-card-body .markdown-content pre { background: var(--surface3); padding: 10px; border-radius: var(--radius-xs); overflow-x: auto; margin: 8px 0; }
         .model-card-body .markdown-content pre code { background: none; padding: 0; }
-        .model-card-body .markdown-content ul, .model-card-body .markdown-content ol {
-            padding-left: 20px;
-            margin: 6px 0;
-        }
+        .model-card-body .markdown-content ul, .model-card-body .markdown-content ol { padding-left: 20px; margin: 6px 0; }
 
-        .thinking-toggle {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 11px;
-            color: var(--accent);
-            cursor: pointer;
-            padding: 8px 16px;
-            border-bottom: 1px solid var(--border);
-            user-select: none;
-            transition: background 0.2s;
-        }
+        .thinking-toggle { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--accent); cursor: pointer; padding: 8px 16px; border-bottom: 1px solid var(--border); user-select: none; transition: background 0.2s; }
         .thinking-toggle:hover { background: var(--accent-dim); }
-        .thinking-toggle svg {
-            transition: transform 0.2s;
-        }
         .thinking-toggle.open svg { transform: rotate(90deg); }
-        .thinking-content {
-            display: none;
-            padding: 12px 16px;
-            background: rgba(139, 92, 246, 0.03);
-            border-bottom: 1px solid var(--border);
-            font-size: 12px;
-            color: var(--text-dim);
-            max-height: 200px;
-            overflow-y: auto;
-            line-height: 1.6;
-            font-family: 'JetBrains Mono', monospace;
-        }
+        .thinking-content { display: none; padding: 12px 16px; background: rgba(139,92,246,0.03); border-bottom: 1px solid var(--border); font-size: 12px; color: var(--text-dim); max-height: 200px; overflow-y: auto; line-height: 1.6; font-family: 'JetBrains Mono', monospace; }
         .thinking-content.open { display: block; }
 
-        /* Consensus grid */
-        .consensus-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 28px;
-        }
-        .consensus-box {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 16px;
-            border-left: 3px solid;
-        }
+        /* Consensus */
+        .consensus-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 28px; }
+        .consensus-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; border-left: 3px solid; }
         .consensus-box.agree { border-left-color: var(--success); }
         .consensus-box.disagree { border-left-color: var(--danger); }
-        .consensus-box h4 {
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 10px;
-        }
+        .consensus-box h4 { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
         .consensus-box.agree h4 { color: var(--success); }
         .consensus-box.disagree h4 { color: var(--danger); }
         .consensus-box ul { list-style: none; }
-        .consensus-box li {
-            padding: 6px 0;
-            font-size: 13px;
-            line-height: 1.5;
-            color: var(--text-secondary);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            gap: 8px;
-        }
+        .consensus-box li { padding: 6px 0; font-size: 13px; line-height: 1.5; color: var(--text-secondary); border-bottom: 1px solid var(--border); display: flex; gap: 8px; }
         .consensus-box li:last-child { border-bottom: none; }
-        .consensus-box li .icon {
-            flex-shrink: 0;
-            font-weight: 700;
-            font-size: 12px;
-            margin-top: 2px;
-        }
+        .consensus-box li .icon { flex-shrink: 0; font-weight: 700; font-size: 12px; margin-top: 2px; }
         .consensus-box.agree li .icon { color: var(--success); }
         .consensus-box.disagree li .icon { color: var(--danger); }
 
         /* Final answer */
-        .final-answer {
-            background: var(--surface);
-            border: 1px solid var(--accent);
-            border-radius: var(--radius);
-            overflow: hidden;
-            margin-bottom: 24px;
-            box-shadow: 0 0 30px var(--accent-dim);
-        }
-        .final-answer-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--border);
-            background: var(--surface2);
-        }
-        .final-answer-header h3 {
-            font-size: 14px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .final-answer-header h3 .icon {
-            width: 20px;
-            height: 20px;
-            background: var(--gradient);
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-        }
-        .confidence-area {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .confidence-label {
-            font-size: 11px;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .confidence-bar {
-            width: 100px;
-            height: 6px;
-            background: var(--surface3);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        .confidence-fill {
-            height: 100%;
-            border-radius: 3px;
-            transition: width 0.8s ease;
-        }
-        .confidence-value {
-            font-size: 13px;
-            font-weight: 700;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .final-answer-body {
-            padding: 20px;
-            font-size: 14px;
-            line-height: 1.8;
-        }
+        .final-answer { background: var(--surface); border: 1px solid var(--accent); border-radius: var(--radius); overflow: hidden; margin-bottom: 24px; box-shadow: 0 0 30px var(--accent-dim); }
+        .final-answer-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--border); background: var(--surface2); }
+        .final-answer-header h3 { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .confidence-area { display: flex; align-items: center; gap: 8px; }
+        .confidence-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
+        .confidence-bar { width: 100px; height: 6px; background: var(--surface3); border-radius: 3px; overflow: hidden; }
+        .confidence-fill { height: 100%; border-radius: 3px; transition: width 0.8s ease; }
+        .confidence-value { font-size: 13px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+        .final-answer-body { padding: 20px; font-size: 14px; line-height: 1.8; }
         .final-answer-body .markdown-content h1 { font-size: 20px; margin: 20px 0 10px; color: var(--text); }
         .final-answer-body .markdown-content h2 { font-size: 17px; margin: 18px 0 8px; color: var(--text); }
         .final-answer-body .markdown-content h3 { font-size: 15px; margin: 16px 0 6px; color: var(--text); }
         .final-answer-body .markdown-content p { margin: 8px 0; color: var(--text-secondary); }
         .final-answer-body .markdown-content strong { color: var(--text); }
-        .final-answer-body .markdown-content code {
-            background: var(--surface3);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
-        }
-        .final-answer-body .markdown-content pre {
-            background: var(--surface2);
-            padding: 16px;
-            border-radius: var(--radius-sm);
-            overflow-x: auto;
-            margin: 12px 0;
-            border: 1px solid var(--border);
-        }
+        .final-answer-body .markdown-content code { background: var(--surface3); padding: 2px 6px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+        .final-answer-body .markdown-content pre { background: var(--surface2); padding: 16px; border-radius: var(--radius-sm); overflow-x: auto; margin: 12px 0; border: 1px solid var(--border); }
         .final-answer-body .markdown-content pre code { background: none; padding: 0; }
-        .final-answer-body .markdown-content ul, .final-answer-body .markdown-content ol {
-            padding-left: 24px;
-            margin: 8px 0;
-            color: var(--text-secondary);
-        }
+        .final-answer-body .markdown-content ul, .final-answer-body .markdown-content ol { padding-left: 24px; margin: 8px 0; color: var(--text-secondary); }
         .final-answer-body .markdown-content li { margin: 4px 0; }
-        .final-answer-body .markdown-content blockquote {
-            border-left: 3px solid var(--accent);
-            padding-left: 16px;
-            margin: 12px 0;
-            color: var(--text-dim);
-        }
-        .final-answer-body .markdown-content table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 12px 0;
-        }
-        .final-answer-body .markdown-content th, .final-answer-body .markdown-content td {
-            padding: 8px 12px;
-            border: 1px solid var(--border);
-            text-align: left;
-            font-size: 13px;
-        }
-        .final-answer-body .markdown-content th {
-            background: var(--surface2);
-            font-weight: 600;
-        }
+        .final-answer-body .markdown-content blockquote { border-left: 3px solid var(--accent); padding-left: 16px; margin: 12px 0; color: var(--text-dim); }
+        .final-answer-body .markdown-content table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+        .final-answer-body .markdown-content th, .final-answer-body .markdown-content td { padding: 8px 12px; border: 1px solid var(--border); text-align: left; font-size: 13px; }
+        .final-answer-body .markdown-content th { background: var(--surface2); font-weight: 600; }
+        .meta-bar { display: flex; gap: 16px; padding: 12px 20px; font-size: 12px; color: var(--text-dim); border-top: 1px solid var(--border); background: var(--surface2); font-family: 'JetBrains Mono', monospace; flex-wrap: wrap; }
 
-        .meta-bar {
-            display: flex;
-            gap: 16px;
-            padding: 12px 20px;
-            font-size: 12px;
-            color: var(--text-dim);
-            border-top: 1px solid var(--border);
-            background: var(--surface2);
-            font-family: 'JetBrains Mono', monospace;
-            flex-wrap: wrap;
-        }
-        .meta-bar span {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        /* History sidebar */
-        .history-toggle {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: var(--gradient);
-            border: none;
-            color: white;
-            font-size: 18px;
-            cursor: pointer;
-            box-shadow: var(--shadow-lg);
-            z-index: 50;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.2s;
-        }
-        .history-toggle:hover { transform: scale(1.1); }
-
-        /* Error state */
-        .error-banner {
-            background: var(--danger-dim);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            border-radius: var(--radius-sm);
-            padding: 12px 16px;
-            margin-bottom: 16px;
-            display: none;
-            font-size: 13px;
-            color: var(--danger);
-        }
+        /* Error */
+        .error-banner { background: var(--danger-dim); border: 1px solid rgba(239,68,68,0.3); border-radius: var(--radius-sm); padding: 12px 16px; margin-bottom: 16px; display: none; font-size: 13px; color: var(--danger); }
         .error-banner.visible { display: flex; align-items: center; gap: 8px; }
 
         /* Footer */
-        .footer {
-            text-align: center;
-            padding: 24px;
-            font-size: 12px;
-            color: var(--text-dim);
-            border-top: 1px solid var(--border);
-            margin-top: 40px;
-        }
+        .footer { text-align: center; padding: 24px; font-size: 12px; color: var(--text-dim); border-top: 1px solid var(--border); margin-top: 40px; }
         .footer a { color: var(--accent); text-decoration: none; }
         .footer a:hover { text-decoration: underline; }
 
-        /* Responsive */
         @media (max-width: 768px) {
             .model-responses { grid-template-columns: 1fr; }
             .consensus-grid { grid-template-columns: 1fr; }
-            .header h1 { font-size: 14px; }
-            .hero h2 { font-size: 22px; }
             .controls { flex-direction: column; }
             .controls-right { margin-left: 0; width: 100%; justify-content: space-between; }
         }
-
-        /* Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
     </style>
 </head>
 <body>
+
+    <!-- API Keys Modal -->
+    <div class="keys-overlay" id="keysOverlay" onclick="if(event.target===this)closeKeys()">
+        <div class="keys-panel">
+            <h2>API Keys</h2>
+            <p class="subtitle">Enter your own API keys to use the platform. Keys are stored only in your browser.</p>
+
+            <div class="keys-notice">
+                Your keys are saved in your browser's localStorage and sent directly to the AI providers. They are never stored on our server. You need at least one key to use the platform.
+            </div>
+
+            <div class="key-field">
+                <label><span class="provider-dot" style="background:#d97706"></span> Anthropic <span class="optional">(Claude)</span></label>
+                <input type="password" id="key_anthropic" placeholder="sk-ant-..." autocomplete="off">
+                <div class="hint">Get your key at <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:var(--accent)">console.anthropic.com</a></div>
+            </div>
+            <div class="key-field">
+                <label><span class="provider-dot" style="background:#22c55e"></span> OpenAI <span class="optional">(GPT-4o, o3)</span></label>
+                <input type="password" id="key_openai" placeholder="sk-..." autocomplete="off">
+                <div class="hint">Get your key at <a href="https://platform.openai.com/api-keys" target="_blank" style="color:var(--accent)">platform.openai.com</a></div>
+            </div>
+            <div class="key-field">
+                <label><span class="provider-dot" style="background:#3b82f6"></span> Google <span class="optional">(Gemini)</span></label>
+                <input type="password" id="key_google" placeholder="AIza..." autocomplete="off">
+                <div class="hint">Get your key at <a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--accent)">aistudio.google.com</a></div>
+            </div>
+            <div class="key-field">
+                <label><span class="provider-dot" style="background:#8b5cf6"></span> DeepSeek <span class="optional">(optional)</span></label>
+                <input type="password" id="key_deepseek" placeholder="sk-..." autocomplete="off">
+                <div class="hint">Get your key at <a href="https://platform.deepseek.com/api_keys" target="_blank" style="color:var(--accent)">platform.deepseek.com</a></div>
+            </div>
+
+            <div class="keys-actions">
+                <button class="btn btn-secondary" onclick="clearKeys()">Clear All</button>
+                <button class="btn btn-primary" onclick="saveKeys()">Save Keys</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
     <div class="header">
         <div class="header-left">
             <div class="logo">R</div>
@@ -745,9 +289,10 @@
         <div class="header-right">
             <div class="status-badge">
                 <div class="status-dot" id="statusDot"></div>
-                <span id="statusText">Connecting...</span>
+                <span id="statusText">No keys set</span>
             </div>
-            <a class="github-link" href="https://github.com/aoloo-r/ai_resoning_box" target="_blank">GitHub</a>
+            <button class="header-btn" id="keysBtn" onclick="openKeys()">API Keys</button>
+            <a class="header-btn" href="https://github.com/aoloo-r/ai_resoning_box" target="_blank">GitHub</a>
         </div>
     </div>
 
@@ -755,6 +300,12 @@
         <div class="hero" id="heroSection">
             <h2>Multi-Model Ensemble Reasoning</h2>
             <p>Query multiple AI models simultaneously, score their responses, and synthesize the best answer.</p>
+        </div>
+
+        <!-- No keys warning -->
+        <div class="no-keys-banner" id="noKeysBanner">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4m0 4h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+            <span>No API keys configured. <a onclick="openKeys()">Add your API keys</a> to start using the platform.</span>
         </div>
 
         <div class="models-bar" id="modelsBar"></div>
@@ -798,87 +349,141 @@
 
         <div class="loading" id="loading">
             <div class="loading-grid">
-                <div class="loading-bar"></div>
-                <div class="loading-bar"></div>
-                <div class="loading-bar"></div>
-                <div class="loading-bar"></div>
-                <div class="loading-bar"></div>
+                <div class="loading-bar"></div><div class="loading-bar"></div><div class="loading-bar"></div><div class="loading-bar"></div><div class="loading-bar"></div>
             </div>
             <div class="loading-text" id="loadingText">Querying all models in parallel...</div>
-            <div class="loading-sub" id="loadingSub">This may take 15-60 seconds depending on model count</div>
+            <div class="loading-sub">This may take 15-60 seconds depending on model count</div>
         </div>
 
         <div class="results" id="results">
-            <div class="section-header">
-                <h3>Model Responses</h3>
-                <div class="line"></div>
-            </div>
+            <div class="section-header"><h3>Model Responses</h3><div class="line"></div></div>
             <div class="model-responses" id="modelResponses"></div>
-
             <div id="consensusSection" style="display:none">
-                <div class="section-header">
-                    <h3>Consensus Analysis</h3>
-                    <div class="line"></div>
-                </div>
+                <div class="section-header"><h3>Consensus Analysis</h3><div class="line"></div></div>
                 <div class="consensus-grid" id="consensusGrid"></div>
             </div>
-
-            <div class="section-header">
-                <h3>Synthesized Answer</h3>
-                <div class="line"></div>
-            </div>
+            <div class="section-header"><h3>Synthesized Answer</h3><div class="line"></div></div>
             <div class="final-answer" id="finalAnswer"></div>
         </div>
     </div>
 
     <div class="footer">
-        Powered by <a href="https://github.com/aoloo-r/ai_resoning_box">AI Reasoning Box</a> &mdash;
-        Multi-model ensemble reasoning platform
+        Powered by <a href="https://github.com/aoloo-r/ai_resoning_box">AI Reasoning Box</a> &mdash; Multi-model ensemble reasoning platform
     </div>
 
     <script>
         const API = window.location.origin + '/api';
         let timerInterval;
 
-        // Configure marked
         marked.setOptions({
             highlight: function(code, lang) {
-                if (lang && hljs.getLanguage(lang)) {
-                    return hljs.highlight(code, { language: lang }).value;
-                }
+                if (lang && hljs.getLanguage(lang)) return hljs.highlight(code, { language: lang }).value;
                 return hljs.highlightAuto(code).value;
             },
-            breaks: true,
-            gfm: true
+            breaks: true, gfm: true
         });
 
         function renderMarkdown(text) {
             if (!text) return '';
+            try { return '<div class="markdown-content">' + marked.parse(text) + '</div>'; }
+            catch { return '<div class="markdown-content">' + escapeHtml(text) + '</div>'; }
+        }
+
+        // --- API Keys Management ---
+        function getStoredKeys() {
             try {
-                return '<div class="markdown-content">' + marked.parse(text) + '</div>';
-            } catch {
-                return '<div class="markdown-content">' + escapeHtml(text) + '</div>';
+                return JSON.parse(localStorage.getItem('ai_reasoning_box_keys') || '{}');
+            } catch { return {}; }
+        }
+
+        function getApiKeysPayload() {
+            const keys = getStoredKeys();
+            return {
+                ANTHROPIC_API_KEY: keys.anthropic || null,
+                OPENAI_API_KEY: keys.openai || null,
+                GOOGLE_API_KEY: keys.google || null,
+                DEEPSEEK_API_KEY: keys.deepseek || null,
+            };
+        }
+
+        function hasAnyKey() {
+            const keys = getStoredKeys();
+            return !!(keys.anthropic || keys.openai || keys.google || keys.deepseek);
+        }
+
+        function openKeys() {
+            const keys = getStoredKeys();
+            document.getElementById('key_anthropic').value = keys.anthropic || '';
+            document.getElementById('key_openai').value = keys.openai || '';
+            document.getElementById('key_google').value = keys.google || '';
+            document.getElementById('key_deepseek').value = keys.deepseek || '';
+            document.getElementById('keysOverlay').classList.add('open');
+        }
+
+        function closeKeys() {
+            document.getElementById('keysOverlay').classList.remove('open');
+        }
+
+        function saveKeys() {
+            const keys = {
+                anthropic: document.getElementById('key_anthropic').value.trim(),
+                openai: document.getElementById('key_openai').value.trim(),
+                google: document.getElementById('key_google').value.trim(),
+                deepseek: document.getElementById('key_deepseek').value.trim(),
+            };
+            localStorage.setItem('ai_reasoning_box_keys', JSON.stringify(keys));
+            closeKeys();
+            updateKeysUI();
+            refreshStatus();
+        }
+
+        function clearKeys() {
+            localStorage.removeItem('ai_reasoning_box_keys');
+            document.getElementById('key_anthropic').value = '';
+            document.getElementById('key_openai').value = '';
+            document.getElementById('key_google').value = '';
+            document.getElementById('key_deepseek').value = '';
+            closeKeys();
+            updateKeysUI();
+            refreshStatus();
+        }
+
+        function updateKeysUI() {
+            const has = hasAnyKey();
+            document.getElementById('noKeysBanner').style.display = has ? 'none' : 'flex';
+            const btn = document.getElementById('keysBtn');
+            if (has) {
+                btn.classList.add('keys-set');
+                btn.textContent = 'API Keys';
+            } else {
+                btn.classList.remove('keys-set');
+                btn.textContent = 'API Keys';
             }
         }
 
-        async function init() {
+        // --- Status ---
+        async function refreshStatus() {
+            if (!hasAnyKey()) {
+                document.getElementById('statusDot').classList.add('offline');
+                document.getElementById('statusText').textContent = 'No keys set';
+                document.getElementById('modelsBar').innerHTML = '';
+                return;
+            }
             try {
-                const resp = await fetch(`${API}/status`);
+                const resp = await fetch(`${API}/status`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ api_keys: getApiKeysPayload() }),
+                });
                 const data = await resp.json();
                 document.getElementById('statusDot').classList.remove('offline');
-                document.getElementById('statusText').textContent =
-                    `${data.active_models.length} models active`;
-
-                const bar = document.getElementById('modelsBar');
-                bar.innerHTML = data.active_models.map(m =>
-                    `<div class="model-chip active">
-                        <span class="dot ${m.provider}"></span>
-                        ${m.name}
-                    </div>`
+                document.getElementById('statusText').textContent = `${data.active_models.length} models active`;
+                document.getElementById('modelsBar').innerHTML = data.active_models.map(m =>
+                    `<div class="model-chip active"><span class="dot ${m.provider}"></span>${m.name}</div>`
                 ).join('');
             } catch (e) {
                 document.getElementById('statusDot').classList.add('offline');
-                document.getElementById('statusText').textContent = 'Not connected';
+                document.getElementById('statusText').textContent = 'Connection error';
             }
         }
 
@@ -890,15 +495,9 @@
         function startTimer() {
             let start = Date.now();
             const el = document.getElementById('timer');
-            timerInterval = setInterval(() => {
-                const elapsed = ((Date.now() - start) / 1000).toFixed(1);
-                el.textContent = `${elapsed}s`;
-            }, 100);
+            timerInterval = setInterval(() => { el.textContent = ((Date.now()-start)/1000).toFixed(1)+'s'; }, 100);
         }
-
-        function stopTimer() {
-            clearInterval(timerInterval);
-        }
+        function stopTimer() { clearInterval(timerInterval); }
 
         function showError(msg) {
             const banner = document.getElementById('errorBanner');
@@ -908,6 +507,8 @@
         }
 
         async function submitQuery() {
+            if (!hasAnyKey()) { openKeys(); return; }
+
             const query = document.getElementById('queryInput').value.trim();
             if (!query) return;
 
@@ -924,12 +525,7 @@
             document.getElementById('examplesSection').style.display = 'none';
             startTimer();
 
-            const phases = [
-                'Dispatching to all models...',
-                'Models are reasoning...',
-                'Scoring responses...',
-                'Synthesizing final answer...'
-            ];
+            const phases = ['Dispatching to all models...', 'Models are reasoning...', 'Scoring responses...', 'Synthesizing final answer...'];
             let phaseIdx = 0;
             const phaseInterval = setInterval(() => {
                 phaseIdx = Math.min(phaseIdx + 1, phases.length - 1);
@@ -937,7 +533,7 @@
             }, 8000);
 
             try {
-                const body = { query, strategy };
+                const body = { query, strategy, api_keys: getApiKeysPayload() };
                 if (roles) body.roles = roles;
 
                 const resp = await fetch(`${API}/query`, {
@@ -945,14 +541,11 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(body),
                 });
-
                 if (!resp.ok) {
                     const err = await resp.json();
                     throw new Error(err.detail || `API error (${resp.status})`);
                 }
-
-                const data = await resp.json();
-                renderResults(data);
+                renderResults(await resp.json());
             } catch (e) {
                 showError(e.message);
             } finally {
@@ -963,120 +556,64 @@
             }
         }
 
-        function scoreClass(score) {
-            if (score >= 0.7) return 'score-high';
-            if (score >= 0.4) return 'score-mid';
-            return 'score-low';
-        }
-
-        function confidenceColor(c) {
-            if (c >= 0.7) return 'var(--success)';
-            if (c >= 0.4) return 'var(--warning)';
-            return 'var(--danger)';
-        }
+        function scoreClass(s) { return s >= 0.7 ? 'score-high' : s >= 0.4 ? 'score-mid' : 'score-low'; }
+        function confidenceColor(c) { return c >= 0.7 ? 'var(--success)' : c >= 0.4 ? 'var(--warning)' : 'var(--danger)'; }
 
         function renderScoreBreakdown(scores) {
-            const colors = {
-                accuracy: '#8b5cf6',
-                completeness: '#06b6d4',
-                reasoning_quality: '#22c55e',
-                clarity: '#eab308',
-                consensus: '#ec4899'
-            };
+            const colors = { accuracy:'#8b5cf6', completeness:'#06b6d4', reasoning_quality:'#22c55e', clarity:'#eab308', consensus:'#ec4899' };
             const keys = Object.keys(scores);
             if (!keys.length) return '';
-            return `<div class="score-breakdown">${
-                keys.map(k => `<div class="score-bar-segment" style="flex:${scores[k] || 0.01};background:${colors[k] || '#555'}" title="${k}: ${(scores[k] * 100).toFixed(0)}%"></div>`).join('')
-            }</div>`;
+            return `<div class="score-breakdown">${keys.map(k=>`<div class="score-bar-segment" style="flex:${scores[k]||0.01};background:${colors[k]||'#555'}" title="${k}: ${(scores[k]*100).toFixed(0)}%"></div>`).join('')}</div>`;
         }
 
-        function toggleThinking(el) {
-            el.classList.toggle('open');
-            el.nextElementSibling.classList.toggle('open');
-        }
+        function toggleThinking(el) { el.classList.toggle('open'); el.nextElementSibling.classList.toggle('open'); }
 
         function renderResults(data) {
-            // Model responses
             const container = document.getElementById('modelResponses');
-            const sorted = [...data.individual_responses].sort((a, b) => a.rank - b.rank);
+            const sorted = [...data.individual_responses].sort((a,b) => a.rank - b.rank);
             container.innerHTML = sorted.map(r => {
                 const thinkingHtml = r.reasoning_trace
-                    ? `<div class="thinking-toggle" onclick="toggleThinking(this)">
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
-                        Show reasoning trace
-                       </div>
-                       <div class="thinking-content">${escapeHtml(r.reasoning_trace)}</div>`
-                    : '';
-                return `
-                    <div class="model-card">
-                        <div class="model-card-header">
-                            <div class="model-info">
-                                <span class="dot ${r.provider}" style="width:6px;height:6px;border-radius:50%;display:inline-block"></span>
-                                <div>
-                                    <span class="model-name">${escapeHtml(r.model_name)}</span>
-                                    <span class="model-meta"> &middot; ${r.provider} &middot; ${(r.latency_ms / 1000).toFixed(1)}s</span>
-                                </div>
-                            </div>
-                            <div class="rank-badge">
-                                <span class="rank-num">#${r.rank}</span>
-                                <span class="score-pill ${scoreClass(r.score)}">${(r.score * 100).toFixed(0)}%</span>
-                            </div>
+                    ? `<div class="thinking-toggle" onclick="toggleThinking(this)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg> Show reasoning</div><div class="thinking-content">${escapeHtml(r.reasoning_trace)}</div>` : '';
+                return `<div class="model-card">
+                    <div class="model-card-header">
+                        <div class="model-info">
+                            <span class="dot ${r.provider}" style="width:6px;height:6px;border-radius:50%;display:inline-block"></span>
+                            <div><span class="model-name">${escapeHtml(r.model_name)}</span><span class="model-meta"> &middot; ${r.provider} &middot; ${(r.latency_ms/1000).toFixed(1)}s</span></div>
                         </div>
-                        ${renderScoreBreakdown(r.scores || {})}
-                        ${thinkingHtml}
-                        <div class="model-card-body ${r.error ? 'error' : ''}">
-                            ${r.error ? escapeHtml(r.error) : renderMarkdown(r.content)}
-                        </div>
-                    </div>`;
+                        <div class="rank-badge"><span class="rank-num">#${r.rank}</span><span class="score-pill ${scoreClass(r.score)}">${(r.score*100).toFixed(0)}%</span></div>
+                    </div>
+                    ${renderScoreBreakdown(r.scores||{})}${thinkingHtml}
+                    <div class="model-card-body ${r.error?'error':''}">${r.error ? escapeHtml(r.error) : renderMarkdown(r.content)}</div>
+                </div>`;
             }).join('');
 
-            // Consensus
             const consensusSection = document.getElementById('consensusSection');
             const grid = document.getElementById('consensusGrid');
-            if (data.consensus_points.length > 0 || data.disagreement_points.length > 0) {
+            if (data.consensus_points.length || data.disagreement_points.length) {
                 consensusSection.style.display = 'block';
                 let html = '';
-                if (data.consensus_points.length > 0) {
-                    html += `<div class="consensus-box agree">
-                        <h4>Consensus</h4>
-                        <ul>${data.consensus_points.map(p => `<li><span class="icon">+</span><span>${escapeHtml(p)}</span></li>`).join('')}</ul>
-                    </div>`;
-                }
-                if (data.disagreement_points.length > 0) {
-                    html += `<div class="consensus-box disagree">
-                        <h4>Disagreements</h4>
-                        <ul>${data.disagreement_points.map(p => `<li><span class="icon">!</span><span>${escapeHtml(p)}</span></li>`).join('')}</ul>
-                    </div>`;
-                }
+                if (data.consensus_points.length) html += `<div class="consensus-box agree"><h4>Consensus</h4><ul>${data.consensus_points.map(p=>`<li><span class="icon">+</span><span>${escapeHtml(p)}</span></li>`).join('')}</ul></div>`;
+                if (data.disagreement_points.length) html += `<div class="consensus-box disagree"><h4>Disagreements</h4><ul>${data.disagreement_points.map(p=>`<li><span class="icon">!</span><span>${escapeHtml(p)}</span></li>`).join('')}</ul></div>`;
                 grid.innerHTML = html;
-            } else {
-                consensusSection.style.display = 'none';
-            }
+            } else { consensusSection.style.display = 'none'; }
 
-            // Final answer
             const fa = document.getElementById('finalAnswer');
             fa.innerHTML = `
                 <div class="final-answer-header">
-                    <h3>
-                        <span class="icon">&#x2728;</span>
-                        Synthesized Answer
-                    </h3>
+                    <h3>Synthesized Answer</h3>
                     <div class="confidence-area">
                         <span class="confidence-label">Confidence</span>
-                        <div class="confidence-bar">
-                            <div class="confidence-fill" style="width:${data.confidence * 100}%; background:${confidenceColor(data.confidence)}"></div>
-                        </div>
-                        <span class="confidence-value" style="color:${confidenceColor(data.confidence)}">${(data.confidence * 100).toFixed(0)}%</span>
+                        <div class="confidence-bar"><div class="confidence-fill" style="width:${data.confidence*100}%;background:${confidenceColor(data.confidence)}"></div></div>
+                        <span class="confidence-value" style="color:${confidenceColor(data.confidence)}">${(data.confidence*100).toFixed(0)}%</span>
                     </div>
                 </div>
                 <div class="final-answer-body">${renderMarkdown(data.final_answer)}</div>
                 <div class="meta-bar">
-                    <span>Strategy: ${data.strategy.replace(/_/g, ' ')}</span>
+                    <span>Strategy: ${data.strategy.replace(/_/g,' ')}</span>
                     <span>Models: ${data.individual_responses.length}</span>
-                    <span>Latency: ${(data.total_latency_ms / 1000).toFixed(1)}s</span>
+                    <span>Latency: ${(data.total_latency_ms/1000).toFixed(1)}s</span>
                     <span>ID: ${data.id}</span>
                 </div>`;
-
             document.getElementById('results').classList.add('visible');
             document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
@@ -1088,15 +625,14 @@
             return div.innerHTML;
         }
 
-        // Keyboard shortcuts
         document.getElementById('queryInput').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-                e.preventDefault();
-                submitQuery();
-            }
+            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); submitQuery(); }
         });
 
-        init();
+        // Auto-open keys panel on first visit if no keys
+        updateKeysUI();
+        refreshStatus();
+        if (!hasAnyKey()) setTimeout(openKeys, 500);
     </script>
 </body>
 </html>

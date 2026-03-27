@@ -9,10 +9,10 @@ from core.providers.base import BaseProvider
 class OpenAIProvider(BaseProvider):
     name = "openai"
 
-    def __init__(self):
+    def __init__(self, api_key: str | None = None):
         from openai import AsyncOpenAI
         self.client = AsyncOpenAI(
-            api_key=os.environ.get("OPENAI_API_KEY", ""),
+            api_key=api_key or os.environ.get("OPENAI_API_KEY", ""),
         )
 
     async def generate(

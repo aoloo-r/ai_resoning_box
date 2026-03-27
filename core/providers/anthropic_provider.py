@@ -9,10 +9,10 @@ from core.providers.base import BaseProvider
 class AnthropicProvider(BaseProvider):
     name = "anthropic"
 
-    def __init__(self):
+    def __init__(self, api_key: str | None = None):
         import anthropic
         self.client = anthropic.AsyncAnthropic(
-            api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
+            api_key=api_key or os.environ.get("ANTHROPIC_API_KEY", ""),
         )
 
     async def generate(

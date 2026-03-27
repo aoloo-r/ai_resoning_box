@@ -10,8 +10,8 @@ from core.synthesizer import Synthesizer
 class EnsemblePipeline:
     """High-level API for the ensemble reasoning platform."""
 
-    def __init__(self, config_path: str | None = None):
-        self.orchestrator = Orchestrator(config_path)
+    def __init__(self, config_path: str | None = None, api_keys: dict[str, str] | None = None):
+        self.orchestrator = Orchestrator(config_path, api_keys=api_keys)
         self._init_synthesizer()
 
     def _init_synthesizer(self):

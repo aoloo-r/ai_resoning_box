@@ -9,9 +9,9 @@ from core.providers.base import BaseProvider
 class GoogleProvider(BaseProvider):
     name = "google"
 
-    def __init__(self):
+    def __init__(self, api_key: str | None = None):
         import google.generativeai as genai
-        genai.configure(api_key=os.environ.get("GOOGLE_API_KEY", ""))
+        genai.configure(api_key=api_key or os.environ.get("GOOGLE_API_KEY", ""))
         self.genai = genai
 
     async def generate(
