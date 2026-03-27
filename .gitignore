@@ -20,3 +20,5 @@ Thumbs.db
 training/data/
 training/checkpoints/
 training/models/
+*.pt
+*.gguf

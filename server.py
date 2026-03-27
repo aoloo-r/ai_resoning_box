@@ -22,6 +22,8 @@ from pydantic import BaseModel
 from core.models import SynthesisStrategy, ModelRole
 from core.pipeline import EnsemblePipeline
 from core.collector import DataCollector
+from core.adversarial import WeaknessFinder
+from core.router import DynamicRouter
 
 app = FastAPI(
     title="AI Ensemble Reasoning Platform",
@@ -203,7 +205,6 @@ async def get_recent_training():
     """Get recent training data entries."""
     collector = DataCollector()
     entries = collector.get_recent_entries(20)
-    # Return summaries, not full content
     return [
         {
             "id": e.get("id"),
@@ -215,6 +216,31 @@ async def get_recent_training():
         }
         for e in entries
     ]
+
+
+@app.get("/api/jepa/weaknesses")
+async def get_weaknesses():
+    """Get adversarial weakness analysis of frontier models."""
+    finder = WeaknessFinder()
+    return finder.get_weakness_report()
+
+
+@app.get("/api/jepa/route")
+async def route_query(query: str):
+    """Get the dynamic router's recommendation for a query."""
+    router = DynamicRouter()
+    decision = router.route(query)
+    return {
+        "question_type": decision.question_type,
+        "difficulty": decision.difficulty,
+        "recommended_models": decision.recommended_models,
+        "recommended_strategy": decision.recommended_strategy,
+        "temperature": decision.temperature,
+        "use_meta_reasoning": decision.use_meta_reasoning,
+        "reasoning_depth": decision.reasoning_depth,
+        "confidence": decision.confidence,
+        "explanation": decision.explanation,
+    }
 
 
 # Serve static UI files

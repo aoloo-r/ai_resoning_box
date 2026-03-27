@@ -1,223 +1,223 @@
 # AI Reasoning Box
 
-**Multi-Model Ensemble Reasoning Platform** — Query multiple AI models simultaneously, score their responses, synthesize the best answer, and train your own model on the results.
+**Multi-Model Ensemble Reasoning Platform with JEPA Architecture** — Query multiple AI models simultaneously, learn where they fail, and train a model that beats them all.
 
 ![Python](https://img.shields.io/badge/Python-3.12+-blue)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-green)
+![JEPA](https://img.shields.io/badge/Architecture-JEPA-purple)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
 ## Live Demo
 
 **https://ai-reasoning-box.onrender.com**
 
-> Users bring their own API keys — entered in the browser, stored only in localStorage, never on the server.
+> Users bring their own API keys — stored only in the browser, never on the server.
 
-## How It Works
+## The Vision: Beat Every AI Model
 
 ```
- Your Question
-      |
-      v
- +----+----+----+----+----+
- | Claude  | GPT-4o | Gemini | o3-mini | Haiku |   <-- Parallel query
- +----+----+----+----+----+
-      |         |        |        |         |
-      v         v        v        v         v
- [ Score: accuracy, completeness, reasoning, clarity ]
-      |
-      v
- [ Synthesize best elements into one answer ]
-      |
-      v
- [ Collect as training data ]  -->  [ Fine-tune ReasoningBox model ]
-      |                                        |
-      v                                        v
- Final Answer                    Your own AI model joins the ensemble
+┌──────────────────────────────────────────────────────────────────┐
+│                     AI REASONING BOX                             │
+│                                                                  │
+│  1. QUERY    All frontier models in parallel                     │
+│              Claude, GPT-4o, Gemini, DeepSeek                    │
+│                          │                                       │
+│  2. SCORE    4-dimensional evaluation                            │
+│              Accuracy, Completeness, Reasoning, Clarity          │
+│                          │                                       │
+│  3. FIND     Adversarial Weakness Finder                         │
+│     GAPS     "Where do frontier models FAIL?"                    │
+│                          │                                       │
+│  4. JEPA     Learn reasoning patterns in embedding space         │
+│     LEARN    (not token prediction — abstract reasoning)         │
+│                          │                                       │
+│  5. TRAIN    Fine-tune on best answers + weakness gaps            │
+│              LoRA + Reward Model + RLHF                          │
+│                          │                                       │
+│  6. DEPLOY   ReasoningBox joins the ensemble                     │
+│              Gets scored alongside frontier models                │
+│                          │                                       │
+│  7. REPEAT   The more you use it, the better it gets             │
+└──────────────────────────────────────────────────────────────────┘
 ```
 
-### The Flywheel
+## Architecture: JEPA for Reasoning
 
-1. **Query** — Send questions to all AI models in parallel
-2. **Score** — Each response is evaluated on 4 dimensions
-3. **Synthesize** — Best elements combined into a single answer
-4. **Collect** — Every high-quality result is saved as training data
-5. **Train** — Fine-tune an open-source model on the collected data
-6. **Deploy** — Your ReasoningBox model joins the ensemble
-7. **Repeat** — The more you use it, the better your model gets
+Inspired by Yann LeCun's **Joint Embedding Predictive Architecture** (JEPA), our model learns to reason in abstract embedding space rather than just predicting tokens.
 
-## Features
+```
+Standard LLM:     Question → [predict tokens] → Answer  (copies patterns)
 
-### Ensemble Reasoning
-- Query 6+ AI models simultaneously
-- 4-dimensional response scoring (accuracy, completeness, reasoning quality, clarity)
-- Consensus and disagreement detection
-- 4 synthesis strategies
+ReasoningBox:     Question → [JEPA: predict reasoning PATTERN]
+                           → [World Model: verify quality]
+                           → [Meta-Reasoning: think-critique-refine]
+                           → [Guided Decoding: steer toward best reasoning]
+                           → Answer  (learns to THINK)
+```
 
-### ReasoningBox Model Training
-- Automatic data collection from every ensemble query
-- Quality filtering (confidence >= 0.6, 2+ model responses)
-- LoRA fine-tuning pipeline on open-source base models
-- Export to HuggingFace Hub or Ollama
-- Training progress dashboard in the web UI
+### Why JEPA Beats Standard Fine-Tuning
 
-## Supported Providers
+| Approach | What It Learns | Limitation |
+|----------|---------------|------------|
+| Standard fine-tuning | Surface text patterns | Copies style, not reasoning |
+| RLHF | Human preferences | Expensive, preference noise |
+| **JEPA (ours)** | Abstract reasoning representations | Learns *how to think* |
 
-| Provider | Models | API Key Source |
-|----------|--------|----------------|
-| **Anthropic** | Claude Sonnet 4.6, Claude Haiku 4.5 | [console.anthropic.com](https://console.anthropic.com/settings/keys) |
-| **OpenAI** | GPT-4o, o3-mini | [platform.openai.com](https://platform.openai.com/api-keys) |
-| **Google** | Gemini 2.5 Pro, Gemini 2.5 Flash | [aistudio.google.com](https://aistudio.google.com/apikey) |
-| **DeepSeek** | DeepSeek R1 | [platform.deepseek.com](https://platform.deepseek.com/api_keys) |
-| **ReasoningBox** | Your fine-tuned model | Runs locally or via Ollama |
+### Five Components
 
-## Synthesis Strategies
+#### 1. JEPA Reasoning Predictor (`core/jepa/`)
+- **Context Encoder**: Encodes questions into reasoning space
+- **Predictor**: Predicts what good reasoning looks like (before seeing the answer)
+- **Target Encoder**: EMA-updated from context encoder (prevents collapse)
+- **VICReg Loss**: Variance-Invariance-Covariance regularization + contrastive learning
 
-| Strategy | Description |
-|----------|-------------|
-| **Weighted Merge** | Ranks responses by weighted score, synthesizes best elements |
-| **Best of N** | Returns the highest-scored response |
-| **Debate** | Models critique each other in rounds, then merge |
-| **Chain of Verification** | Weighted merge + verification pass for errors |
+#### 2. Adversarial Weakness Finder (`core/adversarial.py`)
+- Analyzes where Claude, GPT-4o, and Gemini fail
+- Categorizes failures: logical reasoning, math, ambiguity, ethics, etc.
+- Generates targeted training data for those exact weaknesses
+- You don't need to beat them at everything — just where they're weak
+
+#### 3. Meta-Reasoning Engine (`core/meta_reasoning.py`)
+- 5-stage pipeline: Decompose → Reason → Critique → Verify → Refine
+- Self-evaluating: catches its own errors before answering
+- Adjustable depth: trivial questions get fast answers, hard ones get deep reasoning
+- Iterative refinement: keeps improving until quality threshold is met
+
+#### 4. Dynamic Router (`core/router.py`)
+- Classifies question type using learned patterns
+- Routes to optimal model subset (saves cost on easy questions)
+- Selects best synthesis strategy per question type
+- Adjusts temperature and reasoning depth automatically
+
+#### 5. Reward Model (`training/reward_model.py`)
+- Trained on the 4-dimensional scoring data from the ensemble
+- Enables RLHF fine-tuning of ReasoningBox
+- Fast response scoring (replaces expensive LLM-as-judge)
+- Best-of-N sampling at inference time
 
 ## Quick Start
 
-### 1. Run the Web Platform
+### 1. Run the Platform
 
 ```bash
 git clone https://github.com/aoloo-r/ai_resoning_box.git
 cd ai_resoning_box
 pip install -r requirements.txt
 uvicorn server:app --port 8900
-# Open http://localhost:8900 — enter your API keys in the browser
 ```
 
-### 2. Collect Training Data
+### 2. Collect Data (Just Use It!)
 
-Just use the platform! Every query automatically collects training data. The dashboard shows your progress toward the 1,000-pair training threshold.
+Every query automatically collects training data. The dashboard tracks your progress.
 
-### 3. Train Your ReasoningBox Model
+### 3. Train the JEPA Model
 
 ```bash
-# Install training dependencies
 pip install -r training/requirements-training.txt
 
-# Prepare the dataset
-python training/prepare_data.py
+# Train JEPA reasoning predictor
+python training/train_jepa.py
 
-# Fine-tune (default: Qwen2.5-7B with LoRA)
+# Train reward model for RLHF
+python training/reward_model.py
+
+# Fine-tune the language model
 python training/train.py
 
-# Or customize:
-python training/train.py \
-  --base-model meta-llama/Llama-3.1-8B-Instruct \
-  --epochs 3 \
-  --lora-rank 64 \
-  --lr 2e-4
+# Export for deployment
+python training/export_model.py --to-gguf
 ```
 
-### 4. Export & Deploy Your Model
+### 4. Analyze Weaknesses
 
 ```bash
-# Merge LoRA weights into full model
-python training/export_model.py
+# The API endpoint shows weakness analysis
+curl http://localhost:8900/api/jepa/weaknesses
 
-# Convert for Ollama
-python training/export_model.py --to-gguf
-
-# Or push to HuggingFace Hub
-python training/export_model.py --push-hub your-name/ReasoningBox-7B
-
-# Test it
-python training/test_model.py --interactive
+# Route a query optimally
+curl "http://localhost:8900/api/jepa/route?query=Prove+the+Riemann+hypothesis"
 ```
 
-### 5. Add ReasoningBox to the Ensemble
+## Training Pipeline
 
-Enable in `config.yaml`:
-```yaml
-reasoning_box:
-  enabled: true
-  models:
-    - id: reasoning-box
-      name: "ReasoningBox"
-      role: reasoning
+```
+Ensemble Data
+     │
+     ├──→ train_jepa.py      → JEPA reasoning predictor + World Model
+     ├──→ reward_model.py     → Reward model for RLHF
+     ├──→ prepare_data.py     → Cleaned training pairs
+     ├──→ train.py            → LoRA fine-tuning on best answers
+     └──→ adversarial.py      → Targeted weakness training data
+            │
+            v
+     export_model.py → Merged model → Ollama / HuggingFace / vLLM
+            │
+            v
+     ReasoningBox joins the ensemble → Competes with frontier models
 ```
 
-Now your model competes alongside Claude, GPT-4o, and Gemini!
+## API Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `POST` | `/api/status` | Active models (with user API keys) |
+| `POST` | `/api/query` | Ensemble reasoning query |
+| `GET` | `/api/strategies` | List synthesis strategies |
+| `GET` | `/api/training/stats` | Training data statistics |
+| `GET` | `/api/training/recent` | Recent collected queries |
+| `GET` | `/api/jepa/weaknesses` | Frontier model weakness analysis |
+| `GET` | `/api/jepa/route?query=...` | Dynamic routing recommendation |
+
+## Project Structure
+
+```
+├── core/
+│   ├── jepa/                      # JEPA Architecture
+│   │   ├── architecture.py        # Encoder + Predictor + VICReg loss
+│   │   └── world_model.py         # Quality predictor + Guided decoder
+│   ├── adversarial.py             # Weakness finder + adversarial data gen
+│   ├── meta_reasoning.py          # Multi-stage reasoning engine
+│   ├── router.py                  # Dynamic query router
+│   ├── collector.py               # Training data collector
+│   ├── models.py                  # Data models
+│   ├── orchestrator.py            # Multi-model dispatcher
+│   ├── synthesizer.py             # Response scoring + synthesis
+│   ├── pipeline.py                # High-level orchestration
+│   └── providers/                 # AI provider integrations
+│       ├── anthropic_provider.py
+│       ├── openai_provider.py
+│       ├── google_provider.py
+│       ├── deepseek_provider.py
+│       ├── ollama_provider.py
+│       └── reasoning_box_provider.py
+├── training/
+│   ├── train_jepa.py              # JEPA training (embedding space)
+│   ├── reward_model.py            # Reward model for RLHF
+│   ├── train.py                   # LoRA fine-tuning
+│   ├── prepare_data.py            # Dataset preparation
+│   ├── export_model.py            # Model export (GGUF/HF Hub)
+│   └── test_model.py              # Model testing
+├── static/index.html              # Web UI + Training dashboard
+├── server.py                      # FastAPI server
+├── main.py                        # CLI interface
+├── config.yaml                    # Configuration
+├── Dockerfile                     # Container deployment
+└── render.yaml                    # Render.com config
+```
 
 ## Deployment
 
 ### Docker
-
 ```bash
 docker build -t ai-reasoning-box .
 docker run -p 8900:8900 ai-reasoning-box
 ```
 
 ### Render (One-Click)
-
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/aoloo-r/ai_resoning_box)
-
-No environment variables needed. Users provide their own API keys.
-
-## API Endpoints
-
-| Method | Path | Description |
-|--------|------|-------------|
-| `POST` | `/api/status` | Get active models (with user API keys) |
-| `POST` | `/api/query` | Submit an ensemble query |
-| `GET` | `/api/strategies` | List synthesis strategies |
-| `GET` | `/api/training/stats` | Training data statistics |
-| `GET` | `/api/training/recent` | Recent collected queries |
-
-### Query Example
-
-```bash
-curl -X POST https://ai-reasoning-box.onrender.com/api/query \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "Explain quantum computing",
-    "strategy": "weighted_merge",
-    "api_keys": {
-      "ANTHROPIC_API_KEY": "sk-ant-...",
-      "OPENAI_API_KEY": "sk-..."
-    }
-  }'
-```
-
-## Project Structure
-
-```
-├── core/
-│   ├── models.py                  # Data models and enums
-│   ├── orchestrator.py            # Multi-model dispatcher
-│   ├── synthesizer.py             # Response scoring and synthesis
-│   ├── pipeline.py                # High-level orchestration + data collection
-│   ├── collector.py               # Training data collector
-│   └── providers/
-│       ├── anthropic_provider.py  # Claude
-│       ├── openai_provider.py     # GPT-4o, o3
-│       ├── google_provider.py     # Gemini
-│       ├── deepseek_provider.py   # DeepSeek R1
-│       ├── ollama_provider.py     # Local models
-│       └── reasoning_box_provider.py  # Your fine-tuned model
-├── training/
-│   ├── prepare_data.py            # Dataset preparation
-│   ├── train.py                   # LoRA fine-tuning
-│   ├── export_model.py            # Merge & export weights
-│   ├── test_model.py              # Test the fine-tuned model
-│   └── requirements-training.txt  # Training dependencies
-├── static/index.html              # Web UI with training dashboard
-├── server.py                      # FastAPI server
-├── main.py                        # CLI interface
-├── config.yaml                    # Provider & model config
-├── Dockerfile                     # Container deployment
-└── render.yaml                    # Render.com config
-```
 
 ## Security
 
 - API keys stored **only in browser localStorage**
 - Keys sent per-request, never logged or persisted server-side
-- Fresh provider instances created per request
 - No database, no user accounts, no server-side storage
