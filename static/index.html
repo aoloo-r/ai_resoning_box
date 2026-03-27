@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Ensemble Reasoning Platform</title>
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --surface: #12121a;
+            --surface2: #1a1a2e;
+            --border: #2a2a3e;
+            --text: #e0e0e8;
+            --text-dim: #8888a0;
+            --accent: #6c5ce7;
+            --accent2: #00cec9;
+            --success: #00b894;
+            --warning: #fdcb6e;
+            --danger: #e17055;
+            --gradient: linear-gradient(135deg, #6c5ce7, #00cec9);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        .header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header h1 {
+            font-size: 18px;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+        .header .status {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        .models-bar {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .model-chip {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text-dim);
+            cursor: default;
+            transition: all 0.2s;
+        }
+        .model-chip.active {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(108, 92, 231, 0.1);
+        }
+        .model-chip .provider {
+            color: var(--accent2);
+            font-size: 10px;
+            margin-left: 4px;
+        }
+        .input-area {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+        .input-area textarea {
+            width: 100%;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 100px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .input-area textarea:focus {
+            border-color: var(--accent);
+        }
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        select, button {
+            font-family: inherit;
+            font-size: 13px;
+        }
+        select {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 8px 12px;
+            color: var(--text);
+            outline: none;
+        }
+        .btn-primary {
+            background: var(--gradient);
+            border: none;
+            border-radius: 6px;
+            padding: 10px 24px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .btn-primary:hover { opacity: 0.9; }
+        .btn-primary:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .results { display: none; }
+        .results.visible { display: block; }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            display: none;
+        }
+        .loading.visible { display: block; }
+        .loading .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .model-responses {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .model-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .model-card-header {
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface2);
+        }
+        .model-card-header .name { font-weight: 600; font-size: 13px; }
+        .model-card-header .meta { font-size: 11px; color: var(--text-dim); }
+        .score-badge {
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .score-high { background: rgba(0, 184, 148, 0.15); color: var(--success); }
+        .score-mid { background: rgba(253, 203, 110, 0.15); color: var(--warning); }
+        .score-low { background: rgba(225, 112, 85, 0.15); color: var(--danger); }
+        .model-card-body {
+            padding: 16px;
+            font-size: 13px;
+            line-height: 1.6;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        .model-card-body.error { color: var(--danger); }
+
+        .thinking-toggle {
+            font-size: 11px;
+            color: var(--accent);
+            cursor: pointer;
+            padding: 4px 8px;
+            display: inline-block;
+        }
+        .thinking-content {
+            display: none;
+            padding: 8px 16px;
+            background: rgba(108, 92, 231, 0.05);
+            border-top: 1px solid var(--border);
+            font-size: 12px;
+            color: var(--text-dim);
+            max-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        .thinking-content.open { display: block; }
+
+        .consensus-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .consensus-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+        }
+        .consensus-box.agree { border-left: 3px solid var(--success); }
+        .consensus-box.disagree { border-left: 3px solid var(--danger); }
+        .consensus-box ul {
+            list-style: none;
+            padding: 0;
+        }
+        .consensus-box li {
+            padding: 6px 0;
+            font-size: 13px;
+            line-height: 1.5;
+            border-bottom: 1px solid var(--border);
+        }
+        .consensus-box li:last-child { border-bottom: none; }
+        .consensus-box li::before {
+            margin-right: 8px;
+            font-weight: bold;
+        }
+        .consensus-box.agree li::before { content: "+"; color: var(--success); }
+        .consensus-box.disagree li::before { content: "!"; color: var(--danger); }
+
+        .final-answer {
+            background: var(--surface);
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .final-answer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .confidence-bar {
+            width: 120px;
+            height: 6px;
+            background: var(--surface2);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .confidence-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.5s;
+        }
+        .final-answer-body {
+            font-size: 14px;
+            line-height: 1.8;
+            white-space: pre-wrap;
+        }
+        .meta-bar {
+            display: flex;
+            gap: 20px;
+            padding: 12px 0;
+            font-size: 12px;
+            color: var(--text-dim);
+            border-top: 1px solid var(--border);
+            margin-top: 16px;
+        }
+
+        /* Markdown-ish rendering */
+        .final-answer-body h1, .final-answer-body h2, .final-answer-body h3 {
+            margin: 16px 0 8px;
+            color: var(--accent2);
+        }
+        .final-answer-body code {
+            background: var(--surface2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        .final-answer-body pre {
+            background: var(--surface2);
+            padding: 12px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 8px 0;
+        }
+
+        @media (max-width: 768px) {
+            .model-responses { grid-template-columns: 1fr; }
+            .consensus-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>AI ENSEMBLE REASONING</h1>
+        <div class="status">
+            <div class="status-dot"></div>
+            <span id="statusText" style="font-size:12px; color: var(--text-dim);">Loading...</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="models-bar" id="modelsBar"></div>
+
+        <div class="input-area">
+            <textarea id="queryInput" placeholder="Ask anything. All models will reason on it simultaneously..."></textarea>
+            <div class="controls">
+                <select id="strategySelect">
+                    <option value="weighted_merge">Weighted Merge</option>
+                    <option value="best_of_n">Best of N</option>
+                    <option value="debate">Debate</option>
+                    <option value="chain_of_verification">Chain of Verification</option>
+                </select>
+                <button class="btn-primary" id="submitBtn" onclick="submitQuery()">Run Ensemble</button>
+                <span id="timer" style="font-size:12px; color: var(--text-dim);"></span>
+            </div>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <div style="color: var(--text-dim); font-size: 13px;" id="loadingText">
+                Querying all models in parallel...
+            </div>
+        </div>
+
+        <div class="results" id="results">
+            <div class="section-title">Individual Model Responses</div>
+            <div class="model-responses" id="modelResponses"></div>
+
+            <div class="consensus-grid" id="consensusGrid"></div>
+
+            <div class="section-title">Synthesized Answer</div>
+            <div class="final-answer" id="finalAnswer"></div>
+        </div>
+    </div>
+
+    <script>
+        const API = window.location.origin + '/api';
+        let timerInterval;
+
+        async function init() {
+            try {
+                const resp = await fetch(`${API}/status`);
+                const data = await resp.json();
+                document.getElementById('statusText').textContent =
+                    `${data.active_models.length} models | ${data.active_providers.length} providers`;
+
+                const bar = document.getElementById('modelsBar');
+                bar.innerHTML = data.active_models.map(m =>
+                    `<div class="model-chip active">
+                        ${m.name}<span class="provider">${m.provider}</span>
+                    </div>`
+                ).join('');
+            } catch (e) {
+                document.getElementById('statusText').textContent = 'API not connected';
+            }
+        }
+
+        function startTimer() {
+            let start = Date.now();
+            const el = document.getElementById('timer');
+            timerInterval = setInterval(() => {
+                const elapsed = ((Date.now() - start) / 1000).toFixed(1);
+                el.textContent = `${elapsed}s`;
+            }, 100);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
+
+        async function submitQuery() {
+            const query = document.getElementById('queryInput').value.trim();
+            if (!query) return;
+
+            const strategy = document.getElementById('strategySelect').value;
+            const btn = document.getElementById('submitBtn');
+
+            btn.disabled = true;
+            document.getElementById('loading').classList.add('visible');
+            document.getElementById('results').classList.remove('visible');
+            document.getElementById('loadingText').textContent = 'Querying all models in parallel...';
+            startTimer();
+
+            try {
+                const resp = await fetch(`${API}/query`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query, strategy }),
+                });
+
+                if (!resp.ok) {
+                    const err = await resp.json();
+                    throw new Error(err.detail || 'API error');
+                }
+
+                const data = await resp.json();
+                renderResults(data);
+            } catch (e) {
+                alert('Error: ' + e.message);
+            } finally {
+                btn.disabled = false;
+                document.getElementById('loading').classList.remove('visible');
+                stopTimer();
+            }
+        }
+
+        function scoreClass(score) {
+            if (score >= 0.7) return 'score-high';
+            if (score >= 0.4) return 'score-mid';
+            return 'score-low';
+        }
+
+        function confidenceColor(c) {
+            if (c >= 0.7) return 'var(--success)';
+            if (c >= 0.4) return 'var(--warning)';
+            return 'var(--danger)';
+        }
+
+        function renderResults(data) {
+            // Model responses
+            const container = document.getElementById('modelResponses');
+            container.innerHTML = data.individual_responses.map((r, i) => {
+                const thinkingHtml = r.reasoning_trace
+                    ? `<span class="thinking-toggle" onclick="this.nextElementSibling.classList.toggle('open')">Show reasoning</span>
+                       <div class="thinking-content">${escapeHtml(r.reasoning_trace)}</div>`
+                    : '';
+                return `
+                    <div class="model-card">
+                        <div class="model-card-header">
+                            <div>
+                                <span class="name">${escapeHtml(r.model_name)}</span>
+                                <span class="meta"> | ${r.provider} | ${r.latency_ms.toFixed(0)}ms</span>
+                            </div>
+                            <span class="score-badge ${scoreClass(r.score)}">
+                                #${r.rank} &middot; ${(r.score * 100).toFixed(0)}%
+                            </span>
+                        </div>
+                        ${thinkingHtml}
+                        <div class="model-card-body ${r.error ? 'error' : ''}">
+                            ${r.error ? escapeHtml(r.error) : escapeHtml(r.content)}
+                        </div>
+                    </div>`;
+            }).join('');
+
+            // Consensus
+            const grid = document.getElementById('consensusGrid');
+            let consensusHtml = '';
+            if (data.consensus_points.length > 0) {
+                consensusHtml += `
+                    <div class="consensus-box agree">
+                        <div class="section-title" style="margin-bottom:8px">Consensus</div>
+                        <ul>${data.consensus_points.map(p => `<li>${escapeHtml(p)}</li>`).join('')}</ul>
+                    </div>`;
+            }
+            if (data.disagreement_points.length > 0) {
+                consensusHtml += `
+                    <div class="consensus-box disagree">
+                        <div class="section-title" style="margin-bottom:8px">Disagreements</div>
+                        <ul>${data.disagreement_points.map(p => `<li>${escapeHtml(p)}</li>`).join('')}</ul>
+                    </div>`;
+            }
+            grid.innerHTML = consensusHtml;
+
+            // Final answer
+            const fa = document.getElementById('finalAnswer');
+            fa.innerHTML = `
+                <div class="final-answer-header">
+                    <div class="section-title" style="margin:0">Definitive Answer</div>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span style="font-size:12px; color: var(--text-dim)">Confidence</span>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" style="width:${data.confidence * 100}%; background:${confidenceColor(data.confidence)}"></div>
+                        </div>
+                        <span style="font-size:12px; font-weight:600; color:${confidenceColor(data.confidence)}">${(data.confidence * 100).toFixed(0)}%</span>
+                    </div>
+                </div>
+                <div class="final-answer-body">${escapeHtml(data.final_answer)}</div>
+                <div class="meta-bar">
+                    <span>Strategy: ${data.strategy.replace(/_/g, ' ')}</span>
+                    <span>Models: ${data.individual_responses.length}</span>
+                    <span>Total: ${(data.total_latency_ms / 1000).toFixed(1)}s</span>
+                    <span>ID: ${data.id}</span>
+                </div>`;
+
+            document.getElementById('results').classList.add('visible');
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Submit on Ctrl+Enter
+        document.getElementById('queryInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                submitQuery();
+            }
+        });
+
+        init();
+    </script>
+</body>
+</html>
